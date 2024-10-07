@@ -2,31 +2,37 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>文件大小计算</title>
+    <title>人生信息库</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>选择文件以计算大小</h1>
-    <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,audio/*,video/*">
-    <div id="result"></div>
-
-    <script>
-        document.getElementById('fileInput').addEventListener('change', function(event) {
-            const files = event.target.files;
-            let totalSize = 0;
-            const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
-                                  'audio/mpeg', 'audio/wav', 'audio/ogg', 
-                                  'video/mp4', 'video/x-msvideo', 'video/x-matroska'];
-
-            for (let file of files) {
-                if (allowedTypes.includes(file.type)) {
-                    totalSize += file.size;
-                } else {
-                    alert(`文件类型不被支持: ${file.name}`);
-                }
-            }
-
-            document.getElementById('result').innerText = `文件总大小: ${totalSize} bytes`;
-        });
-    </script>
+    <div class="container">
+        <header>
+            <h1 id="pageTitle">人生信息库</h1>
+            <p id="pageSubtitle">独立于财富的另一条价值量化路径</p>
+        </header>
+        <main>
+            <section class="user-input">
+                <input type="text" id="userName" placeholder="输入你的名字">
+                <button onclick="updateTitle()">更新</button>
+            </section>
+            <section class="file-upload">
+                <p class="upload-prompt">上传你的文档、图片、音频和视频以量化你的人生</p>
+                <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,audio/*,video/*,image/*">
+                <select id="unitSelect">
+                    <option value="bytes">字节</option>
+                    <option value="KB">KB</option>
+                    <option value="MB">MB</option>
+                    <option value="GB">GB</option>
+                </select>
+            </section>
+            <section id="result" class="result"></section>
+            <section id="fileList" class="file-list"></section>
+            <section class="navigation">
+                <button onclick="goToHistory()">查看往日数据</button>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>

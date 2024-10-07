@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>往日数据 - 人生信息库</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>往日数据</h1>
+        </header>
+        <main>
+            <section id="totalInfo" class="total-info"></section>
+            <section id="chartContainer" class="chart-container">
+                <canvas id="dailyChart"></canvas>
+            </section>
+            <section class="navigation">
+                <button onclick="goBack()">返回主页</button>
+            </section>
+        </main>
+    </div>
+    <script src="history.js"></script>
+</body>
+</html>
