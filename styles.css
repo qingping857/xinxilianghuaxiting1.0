@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Noto Sans SC', sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
@@ -15,17 +17,33 @@ body {
 header {
     text-align: center;
     margin-bottom: 40px;
+    position: relative;
+    padding: 20px;
+}
+
+header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.7); /* 半透明白色背景 */
+    border-radius: 10px;
+    z-index: -1;
 }
 
 h1 {
     color: #2c3e50;
     font-size: 2.5em;
     margin-bottom: 10px;
+    position: relative;
 }
 
 #pageSubtitle {
     color: #7f8c8d;
     font-size: 1.2em;
+    position: relative;
 }
 
 section {
@@ -51,6 +69,15 @@ button {
     border: none;
     cursor: pointer;
     transition: background-color 0.3s;
+    font-size: 2em;  /* 将字体大小增加到原来的两倍 */
+    font-weight: bold;  /* 使字体加粗 */
+    padding: 10px 20px;  /* 增加内边距以使按钮变大 */
+    letter-spacing: 2px;  /* 增加字母间距，使文字稍微分散 */
+    display: flex;  /* 使用flex布局 */
+    justify-content: center;  /* 水平居中 */
+    align-items: center;  /* 垂直居中 */
+    width: 200%;  /* 使按钮宽度变为原来的两倍 */
+    height: auto;  /* 高度自动调整 */
 }
 
 button:hover {
@@ -74,9 +101,20 @@ button:hover {
 }
 
 .result {
-    font-size: 1.2em;
+    font-size: 1.5em;
     text-align: center;
     font-weight: bold;
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.result .number {
+    font-size: 1.5em; /* 使数字比周围的文字大 50% */
+    color: #3498db; /* 使用醒目的颜色 */
+    margin: 0 5px; /* 在数字两侧添加一些间距 */
 }
 
 .chart-container {
@@ -97,11 +135,11 @@ canvas {
 
 @media (max-width: 768px) {
     body {
-        font-size: 16px;
+        /* 删除 font-size: 16px; */
     }
 
     h1 {
-        font-size: 24px;
+        /* 删除 font-size: 24px; */
     }
 
     .container {
@@ -124,4 +162,8 @@ canvas {
 .navigation {
     width: 50%; /* 将每个模块的宽度设置为原来的一半 */
     margin: 0 auto 1rem; /* 居中显示并在底部添加间距 */
+}
+
+h1, h2, h3, p, button, input, select, .upload-prompt, .file-list li {
+    font-family: 'Noto Sans SC', sans-serif;
 }
