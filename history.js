@@ -1,37 +1,50 @@
 let chart;
 
 function loadHistoryData() {
-    const uploadedFiles = JSON.parse(localStorage.getItem('uploadedFiles')) || [];
-    const accumulatedSize = parseInt(localStorage.getItem('accumulatedSize')) || 0;
+    // 从localStorage获取历史数据
+    const historyData = JSON.parse(localStorage.getItem('historyData')) || [];
 
-    // 显示人生总信息量（以GB为单位）
-    const totalInfoHtml = `<h2>我已经活出了 ${convertSize(accumulatedSize, 'GB')} GB 的人生</h2>`;
-    document.getElementById('totalInfo').innerHTML = totalInfoHtml;
+    // 如果没有历史数据，生成一些模拟数据
+    if (historyData.length === 0) {
+        historyData.push(...generateHistoryData(30));
+        localStorage.setItem('historyData', JSON.stringify(historyData));
+    }
 
-    // 计算每日统计数据
-    const dailyStats = calculateDailyStats(uploadedFiles);
-    
-    // 创建折线图
-    createChart(dailyStats);
+    // 获取总累计大小
+    const totalSize = parseFloat(localStorage.getItem('totalAccumulatedSize')) || 0;
+    document.getElementById('totalSize').textContent = totalSize.toFixed(2);
+
+    // 创建图表
+    createChart(historyData);
+
+    // 设置提醒（如果在主页面设置了的话）
+    setReminder();
 }
 
-function calculateDailyStats(files) {
-    const dailyStats = {};
-    files.forEach(file => {
-        const date = new Date(file.uploadDate || new Date()).toISOString().split('T')[0];
-        if (dailyStats[date]) {
-            dailyStats[date] += file.size;
-        } else {
-            dailyStats[date] = file.size;
-        }
-    });
-    return dailyStats;
+function generateHistoryData(days) {
+    const data = [];
+    let currentDate = new Date();
+    let currentValue = 0;
+
+    for (let i = 0; i < days; i++) {
+        currentValue += Math.random() * 0.5; // 每天随机增加0到0.5GB
+        data.unshift({
+            date: currentDate.toISOString().split('T')[0],
+            value: parseFloat(currentValue.toFixed(2))
+        });
+        currentDate.setDate(currentDate.getDate() - 1);
+    }
+
+    return data;
 }
 
-function createChart(dailyStats) {
+function createChart(data) {
     const ctx = document.getElementById('dailyChart').getContext('2d');
-    const dates = Object.keys(dailyStats).sort();
-    const sizes = dates.map(date => convertSize(dailyStats[date], 'GB'));
+    const dates = data.map(item => item.date);
+    const sizes = data.map(item => item.value);
+
+    const chartWidth = Math.max(dates.length * 50, 800); // 根据数据点数量设置最小宽度
+    ctx.canvas.width = chartWidth;
 
     chart = new Chart(ctx, {
         type: 'line',
@@ -41,44 +54,83 @@ function createChart(dailyStats) {
                 label: '每日信息量 (GB)',
                 data: sizes,
                 borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
+                tension: 0.1,
+                pointRadius: 3,
+                pointHoverRadius: 5
             }]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 x: {
                     title: {
                         display: true,
                         text: '日期'
+                    },
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
                     }
                 },
                 y: {
                     title: {
                         display: true,
                         text: '信息量 (GB)'
-                    }
+                    },
+                    beginAtZero: true
                 }
+            },
+            plugins: {
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                }
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
             }
         }
     });
 }
 
-function convertSize(size, unit) {
-    switch (unit) {
-        case 'KB':
-            return (size / 1024).toFixed(2);
-        case 'MB':
-            return (size / (1024 * 1024)).toFixed(2);
-        case 'GB':
-            return (size / (1024 * 1024 * 1024)).toFixed(4); // 使用4位小数以提高精度
-        default:
-            return size;
-    }
-}
-
-function goBack() {
+function goToHome() {
     window.location.href = 'index.html';
 }
 
-document.addEventListener('DOMContentLoaded', loadHistoryData);
+// 页面加载时执行
+window.addEventListener('load', loadHistoryData);
+
+function setReminder() {
+    const reminderTime = localStorage.getItem('reminderTime');
+    if (reminderTime) {
+        const [hours, minutes] = reminderTime.split(':');
+        const now = new Date();
+        const reminderDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+        
+        if (reminderDate <= now) {
+            reminderDate.setDate(reminderDate.getDate() + 1);
+        }
+
+        const timeUntilReminder = reminderDate.getTime() - now.getTime();
+
+        setTimeout(() => {
+            showNotification();
+            setReminder(); // 设置下一天的提醒
+        }, timeUntilReminder);
+    }
+}
+
+function showNotification() {
+    if ("Notification" in window) {
+        Notification.requestPermission().then(function (permission) {
+            if (permission === "granted") {
+                new Notification("清平宝宝", {
+                    body: "提醒你来记录今天的信息啦！",
+                    icon: "path/to/your/icon.png" // 你可以添加一个图标
+                });
+            }
+        });
+    }
+}

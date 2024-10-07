@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>人生信息库</title>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -14,24 +15,39 @@
         <main>
             <section class="user-input">
                 <input type="text" id="userName" placeholder="输入你的名字">
-                <button onclick="updateTitle()">更新</button>
+                <button onclick="updateUserInfo()" class="btn">更新</button>
+            </section>
+            <!-- 修改定时提醒模块 -->
+            <section class="reminder-settings">
+                <h2>定时提醒设置</h2>
+                <p class="reminder-tip">设置一个时间，本站会通过浏览器提醒你记录当天的信息</p>
+                <div class="reminder-input">
+                    <input type="time" id="reminderTime" placeholder="设置提醒时间">
+                    <button onclick="updateReminder()" class="btn">设置提醒</button>
+                </div>
+                <p id="reminderStatus"></p>
             </section>
             <section class="file-upload">
                 <p class="upload-prompt">上传你的文档、图片、音频和视频以量化你的人生</p>
-                <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,audio/*,video/*,image/*">
-                <select id="unitSelect">
-                    <option value="bytes">字节</option>
-                    <option value="KB">KB</option>
-                    <option value="MB">MB</option>
-                    <option value="GB">GB</option>
-                </select>
+                <div class="file-upload-controls">
+                    <label for="fileInput" class="file-input-label">
+                        选择文件
+                        <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,audio/*,video/*,image/*">
+                    </label>
+                    <select id="unitSelect" class="unit-select">
+                        <option value="bytes">字节</option>
+                        <option value="KB">KB</option>
+                        <option value="MB">MB</option>
+                        <option value="GB">GB</option>
+                    </select>
+                </div>
             </section>
             <section id="result" class="result">
                 我已经活出了<span class="number">xx</span>GB的人生
             </section>
             <section id="fileList" class="file-list"></section>
             <section class="navigation">
-                <button onclick="goToHistory()">查看往日数据</button>
+                <button onclick="goToHistory()" class="btn">查看往日数据</button>
             </section>
         </main>
     </div>
