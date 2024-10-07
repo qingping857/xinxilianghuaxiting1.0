@@ -7,9 +7,9 @@ body {
 }
 
 .container {
-    max-width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
+    max-width: 50%; /* 将容器宽度减半 */
+    margin: 0 auto; /* 居中显示 */
+    padding: 1rem; /* 添加一些内边距 */
 }
 
 header {
@@ -37,10 +37,9 @@ section {
 }
 
 input[type="text"], input[type="file"], select, button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
+    width: calc(100% - 20px); /* 减去内边距,使元素填满父容器 */
+    padding: 5px 10px; /* 减小内边距 */
+    margin-bottom: 0.5rem; /* 减小底部边距 */
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1em;
@@ -116,4 +115,13 @@ canvas {
 
 .navigation {
     text-align: center;
+}
+
+.user-input,
+.file-upload,
+.result,
+.file-list,
+.navigation {
+    width: 50%; /* 将每个模块的宽度设置为原来的一半 */
+    margin: 0 auto 1rem; /* 居中显示并在底部添加间距 */
 }
