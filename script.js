@@ -208,6 +208,153 @@ function updateReminderStatus() {
 
 // 页面加载时执行
 document.addEventListener('DOMContentLoaded', () => {
+    // 设置默认单位为KB
+    const unitSelect = document.getElementById('unitSelect');
+    unitSelect.value = 'KB';
+
+    // 监听文件输入变化
+    const fileInput = document.getElementById('fileInput');
+    fileInput.addEventListener('change', handleFileSelection);
+});
+
+function handleFileSelection(event) {
+    const files = event.target.files;
+    const fileList = document.getElementById('fileList');
+    fileList.innerHTML = ''; // 清空之前的文件列表
+
+    Array.from(files).forEach(file => {
+        const sizeInKB = (file.size / 1024).toFixed(2); // 将字节转换为KB
+        const listItem = document.createElement('li');
+        listItem.textContent = `${file.name} - ${sizeInKB} KB`;
+        fileList.appendChild(listItem);
+    });
+}
+
+function updateTitle() {
+    userName = document.getElementById('userName').value;
+    const pageTitle = document.getElementById('pageTitle');
+    pageTitle.innerText = userName ? `${userName}的人生信息库` : '人生信息库';
+    saveData();
+}
+
+document.getElementById('fileInput').addEventListener('change', function(event) {
+    const files = event.target.files;
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+                          'audio/mpeg', 'audio/wav', 'audio/ogg', 
+                          'video/mp4', 'video/x-msvideo', 'video/x-matroska',
+                          'image/jpeg', 'image/png', 'image/gif'];
+
+    for (let file of files) {
+        if (allowedTypes.includes(file.type)) {
+            dailyAccumulatedSize += file.size;
+            totalAccumulatedSize += file.size / (1024 * 1024 * 1024); // 更新总累计大小（转换为GB）
+            uploadedFiles.push({ 
+                name: file.name, 
+                size: file.size, 
+                uploadDate: new Date().toISOString() 
+            });
+        } else {
+            alert(`文件类型不被支持: ${file.name}`);
+        }
+    }
+
+    saveData();
+    updateFileList();
+});
+
+document.getElementById('unitSelect').addEventListener('change', updateFileList);
+
+function updateFileList() {
+    const unit = document.getElementById('unitSelect').value;
+    let fileListHtml = '<ul>';
+    
+    uploadedFiles.forEach(file => {
+        const fileSize = convertSize(file.size, unit);
+        fileListHtml += `<li>${file.name} - ${fileSize} ${unit}</li>`;
+    });
+    fileListHtml += '</ul>';
+
+    const dailySizeConverted = convertSize(dailyAccumulatedSize, unit);
+    document.getElementById('fileList').innerHTML = fileListHtml;
+    document.getElementById('result').innerHTML = `当日文件总大小: <span class="number">${dailySizeConverted}</span> ${unit}`;
+}
+
+function convertSize(size, unit) {
+    switch (unit) {
+        case 'KB':
+            return (size / 1024).toFixed(2);
+        case 'MB':
+            return (size / (1024 * 1024)).toFixed(2);
+        case 'GB':
+            return (size / (1024 * 1024 * 1024)).toFixed(4);
+        default:
+            return size;
+    }
+}
+
+function goToHistory() {
+    window.location.href = 'history.html';
+}
+
+function updateUserInfo() {
+    userName = document.getElementById('userName').value;
+    reminderTime = document.getElementById('reminderTime').value;
+    const pageTitle = document.getElementById('pageTitle');
+    pageTitle.innerText = userName ? `${userName}的人生信息库` : '人生信息库';
+    saveData();
+    setReminder();
+}
+
+function setReminder() {
+    if (reminderTime) {
+        const [hours, minutes] = reminderTime.split(':');
+        const now = new Date();
+        const reminderDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+        
+        if (reminderDate <= now) {
+            reminderDate.setDate(reminderDate.getDate() + 1);
+        }
+
+        const timeUntilReminder = reminderDate.getTime() - now.getTime();
+
+        setTimeout(() => {
+            showNotification();
+            setReminder(); // 设置下一天的提醒
+        }, timeUntilReminder);
+    }
+}
+
+function showNotification() {
+    if ("Notification" in window) {
+        Notification.requestPermission().then(function (permission) {
+            if (permission === "granted") {
+                new Notification("清平宝宝", {
+                    body: "提醒你来记录今天的信息啦！",
+                    icon: "path/to/your/icon.png" // 你可以添加一个图标
+                });
+            }
+        });
+    }
+}
+
+function updateReminder() {
+    reminderTime = document.getElementById('reminderTime').value;
+    localStorage.setItem('reminderTime', reminderTime);
+    updateReminderStatus();
+    setReminder();
+}
+
+function updateReminderStatus() {
+    const statusElement = document.getElementById('reminderStatus');
+    if (reminderTime) {
+        statusElement.textContent = `提醒已设置为每天 ${reminderTime}`;
+    } else {
+        statusElement.textContent = '未设置提醒';
+    }
+}
+
+// 页面加载时执行
+document.addEventListener('DOMContentLoaded', () => {
     loadData();
     setReminder();
 });

@@ -41,7 +41,7 @@ function generateHistoryData(days) {
 function createChart(data) {
     const ctx = document.getElementById('dailyChart').getContext('2d');
     const dates = data.map(item => item.date);
-    const sizes = data.map(item => item.value);
+    const sizes = data.map(item => item.value * 1024); // 将GB转换为MB
 
     const chartWidth = Math.max(dates.length * 50, 800); // 根据数据点数量设置最小宽度
     ctx.canvas.width = chartWidth;
@@ -51,7 +51,7 @@ function createChart(data) {
         data: {
             labels: dates,
             datasets: [{
-                label: '每日信息量 (GB)',
+                label: '每日信息量 (MB)', // 更新标签为MB
                 data: sizes,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1,
@@ -76,7 +76,7 @@ function createChart(data) {
                 y: {
                     title: {
                         display: true,
-                        text: '信息量 (GB)'
+                        text: '信息量 (MB)' // 更新纵轴单位为MB
                     },
                     beginAtZero: true
                 }
@@ -133,4 +133,33 @@ function showNotification() {
             }
         });
     }
+}
+
+// 假设有一个函数处理文件上传
+function handleFileUpload(file) {
+    const allowedFormats = ['audio/m4a', 'audio/mp3'];
+    if (!allowedFormats.includes(file.type)) {
+        alert('只允许上传 .m4a 和 .mp3 格式的音频文件');
+        return;
+    }
+    // 处理文件上传的其他逻辑
+}
+
+// 假设有一个函数初始化图表
+function initializeChart(data) {
+    const ctx = document.getElementById('dailyChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: {
+            scales: {
+                y: {
+                    title: {
+                        display: true,
+                        text: 'MB'  // 设置纵轴单位为MB
+                    }
+                }
+            }
+        }
+    });
 }
